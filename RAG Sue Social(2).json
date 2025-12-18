@@ -1,0 +1,698 @@
+{
+  "name": "RAG Sue Social",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1b5FchJZrQ7Mc7FOHmEtE1A-3hTx96Nwv",
+          "mode": "list",
+          "cachedResultName": "RAG sue social ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1b5FchJZrQ7Mc7FOHmEtE1A-3hTx96Nwv"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -992,
+        32
+      ],
+      "id": "c4bb31ec-a154-4943-bd74-21904cebd06e",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "rgXnegcFEhIdVKIf",
+          "name": "sue"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -784,
+        32
+      ],
+      "id": "3926e84f-bfe0-4b09-94b3-c90904e6719f",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "rgXnegcFEhIdVKIf",
+          "name": "sue"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -576,
+        32
+      ],
+      "id": "d0baa7f8-b6e4-4f80-9044-4df9c7227b02",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "r10X3Tcz0mBWzgd5",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -672,
+        224
+      ],
+      "id": "e7339b65-335a-457a-beaf-70d19133d121",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "beAh5CNjaUkyMqRl",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -432,
+        240
+      ],
+      "id": "719df10e-ee09-43f8-81ad-4ae309090831",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=Overview :\n\nYou are an helpfull ai assistant who gets data form the vector data base which has some resumes you help hr as thre is lot of resume you help the hr to select the resume \n\ntools : vector data base \n\nrules : only give infromation based on data in vector tools "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f917ba5f-e0ce-42e6-b3d1-76b7fb9f75c7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -224,
+        48
+      ],
+      "id": "b888f30f-0617-4274-b82b-7befefd0fac2",
+      "name": "When chat message received",
+      "webhookId": "3b5d5f68-0b84-4c8c-9d72-7c15fc431f2d"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        256
+      ],
+      "id": "9f322038-c04e-4778-a138-dbb5e139388a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "beAh5CNjaUkyMqRl",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        32,
+        240
+      ],
+      "id": "60ddebf7-f171-4a64-815a-943ed3ed3aa0",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        336
+      ],
+      "id": "b6e73a5f-baea-4f3c-867f-d2f73ad8dcd0",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "beAh5CNjaUkyMqRl",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Work with data from database vector data base",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        208
+      ],
+      "id": "9d8e8a65-84e1-443d-83bd-e8b3ad7dde57",
+      "name": "Vector data base",
+      "credentials": {
+        "supabaseApi": {
+          "id": "r10X3Tcz0mBWzgd5",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        752,
+        48
+      ],
+      "id": "421b08ee-a22e-4d57-a240-90841261fa76",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YpQcpGdCOViennhH",
+          "name": "bomick Thushar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b4312ec6-9e15-4831-a384-48854d04b055",
+              "name": "snippet",
+              "value": "=mail body :{{ $json.snippet }}\n",
+              "type": "string"
+            },
+            {
+              "id": "086293a4-8f4c-444d-850f-6040c389ea15",
+              "name": "from address",
+              "value": "=from address:{{ $json.From }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        48
+      ],
+      "id": "08d6394c-9239-4fbc-8058-0a37c1d6b8c3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Promotional",
+              "description": "Marketing, offers, discounts, sales pitches, newsletters."
+            },
+            {
+              "category": "Support_Service",
+              "description": "Customer inquiries, troubleshooting, complaints, or help requests."
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "Please classify the text provided by the user into one of the following categories: {categories}, and use the provided formatting instructions below. Don't explain, and only output the json."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        1392,
+        48
+      ],
+      "id": "01cfd42c-8822-45de-a846-c34a04878ce6",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1328,
+        256
+      ],
+      "id": "30a5f295-e8a5-4d61-9f50-5323339f503f",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "beAh5CNjaUkyMqRl",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=email body:{{ $json.snippet }}\n\nfrom:{{ $json['from address'] }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a helpful assistant that answers any inquiries for our e-commerce store called suesocial.\nYou will be drafting email replies for the incoming queries that come through.\n\n## Tools\nVector_store - This tool will be used to help us answer any incoming queries from users  \nemail_draft - This tool will be used to draft any emails back to the user.  \nMake sure to use the Vector_store before using this tool\nemail_sent-This tool will be used to sent any emails  to the agent who attend the customer query used as a notification mention new qurey is been asigned .\n\n## Rules\n- ALWAYS use Vector_store before answering and drafting any emails\n- ALWAYS draft an email with an answer, keep it in draft never send \n- once the draft is created send notification with send mail mention that new qurey is been asigned \n\n\n\n## Extra information\n- My name is James\n- Make sure to include that when drafting the email\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1824,
+        0
+      ],
+      "id": "d60088c6-db5b-49b9-b268-687327a4cded",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1696,
+        208
+      ],
+      "id": "0d957a85-0e74-4e19-9238-1310d34a7efa",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "beAh5CNjaUkyMqRl",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "work with data inside the vector database to answer any question ",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2128,
+        112
+      ],
+      "id": "a4a3ce6c-7bf5-4e47-bf73-a931222acd7d",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "r10X3Tcz0mBWzgd5",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2272,
+        208
+      ],
+      "id": "e4543117-d60a-4b5a-8d4a-62e8653c4676",
+      "name": "Embeddings OpenAI2",
+      "credentials": {
+        "openAiApi": {
+          "id": "beAh5CNjaUkyMqRl",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To_Email', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1984,
+        208
+      ],
+      "id": "44bc2d81-e2f5-4aa9-9c07-164636a30983",
+      "name": "Create a draft in Gmail",
+      "webhookId": "3ba9144d-8b6d-4ad6-b8ef-dacec812672a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YpQcpGdCOViennhH",
+          "name": "bomick Thushar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "bomickkuruppalath@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        304
+      ],
+      "id": "fba10036-0aaf-45d8-909a-4bf9ef32b05c",
+      "name": "Send a message in Gmail",
+      "webhookId": "19c98ccc-721f-46d5-a428-6b89af8c0bba",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YpQcpGdCOViennhH",
+          "name": "bomick Thushar"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Vector data base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector data base": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a draft in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        []
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8fedd81d-6e45-4839-ad79-43b3d39d0801",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "604cdad0d3cf88f3d9f2da13bb6bbda0af40302d8f66a961468e5b6a8c573753"
+  },
+  "id": "bBqE0o6wqGLJBrkP",
+  "tags": []
+}
